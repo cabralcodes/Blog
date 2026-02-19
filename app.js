@@ -20,8 +20,8 @@
         extname: '.hbs',
         defaultLayout: 'main'}))
         app.set('view engine', 'hbs')
+        partialsDir: path.join(__dirname, 'views', 'partials')
         app.set('views', path.join(__dirname, 'views'));
-    
 
     // Mongoose
         // Em Breve
