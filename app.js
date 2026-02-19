@@ -5,7 +5,15 @@
     const app = express()
     //import mongoose from "mongoose";
 // Configurações
-
+    //Body Parser
+        app.use(bodyParser.urlencoded({extended: true}))
+        app.use(bodyParser.json())
+    // Handlebars
+        app.engine('handlebars', handlebars({defaultLayout: 'main'}))
+        app.set('view enine', 'handlebars')
+    // Mongoose
+        // Em Breve
+    //
 // Rotas
 
 // Outros
