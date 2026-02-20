@@ -3,7 +3,7 @@
     import { engine } from "express-handlebars";
     import bodyParser from "body-parser";
     import admin from "./routes/admin.js";
-    //import mongoose from "mongoose";
+    import mongoose from "mongoose";
     import path from "path";
     import { fileURLToPath } from "url";
     const app = express();
@@ -24,7 +24,11 @@
         app.set('views', path.join(__dirname, 'views'));
 
     // Mongoose
-        // Em Breve
+        mongoose.connect("mongodb://localhost/blogapp").then(() => {
+            console.log("Conectado ao MongoDB...")
+        }).catch((err) =>{
+            console.log("Erro ao se conectar: "+err)
+        })
 
     // Public
         app.use(express.static(path.join(__dirname, "public")))
