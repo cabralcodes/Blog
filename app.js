@@ -6,10 +6,27 @@
     import mongoose from "mongoose";
     import path from "path";
     import { fileURLToPath } from "url";
+    import session from "express-session";
+    import flash from "connect-flash";
+import { runInNewContext } from "vm";
     const app = express();
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
 // Configurações
+    // Sessão
+        app.use(session({
+            secret: "cursodenode",
+            resave: true,
+            saveUninitialized: true
+        }))
+        app.use(flash())
+    // Middleware
+        app.use((req,res,next) =>{
+            res.locals.success_msg = req.flash("success_msg")
+            res.locals.error_msg = req.flash("error_msg")
+            next()
+        })
+
 
     //Body Parser
         app.use(bodyParser.urlencoded({extended: true}))
@@ -32,7 +49,6 @@
 
     // Public
         app.use(express.static(path.join(__dirname, "public")))
-
 // Rotas
     app.use('/admin', admin)
 
