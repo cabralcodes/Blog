@@ -8,7 +8,7 @@
     import { fileURLToPath } from "url";
     import session from "express-session";
     import flash from "connect-flash";
-import { runInNewContext } from "vm";
+    import { runInNewContext } from "vm";
     const app = express();
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
