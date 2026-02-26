@@ -57,6 +57,26 @@ router.post("/categorias/nova", (req, res) =>{
 }
 })
 
+router.post("/categorias/deletar", (req,res) => {
+    Categoria.findByIdAndDelete({_id: req.body.id}).then(() => {
+        req.flash("success_msg", "Categoria deletada com sucesso")
+        res.redirect("/admin/categorias")
+    }).catch((err) =>{
+        req.flash("error_msg", "Houve um erro ao deletar a categoria")
+        res.redirect("/admin/categorias")
+    })
+})
+
+router.get("/categorias/edit/:id", (req, res) => {
+    Categoria.findOne({_id:req.params.id}).lean().then((categoria) => {
+    res.render("admin/editcategorias", {categoria: categoria})    
+    }).catch((err) => {
+        req.flash("error_msg", "Essa categoria não existe")
+        res.redirect("admin/categorias")
+    })
+    
+})
+
 router.get("/categorias/add", (req,res) => {
     res.render("admin/addcategorias")
 })
