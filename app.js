@@ -12,6 +12,7 @@
     const app = express();
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
+    import Postagem from "./models/Postagem.js";
 // Configurações
     // Sessão
         app.use(session({
@@ -51,6 +52,33 @@
         app.use(express.static(path.join(__dirname, "public")))
 // Rotas
     app.use('/admin', admin)
+    app.get('/', (req,res) => {
+        Postagem.find().lean().populate("categoria").sort({data: "desc"}).then((postagens) => {
+            res.render("index", {postagens: postagens})
+        }).catch((err) => {
+            req.flash("error_msg", "Houve um erro interno")
+            res.redirect("/404")
+        })
+    })
+
+    app.get("/postagem/:slug", (req,res) => {
+        Postagem.findOne({slug: req.params.slug}).lean().then((postagem) => {
+            if(postagem) {
+                res.render("postagem/index", {postagem: postagem})
+            }else {
+                req.flash("error_msg", "Esta postagem não existe")
+                res.redirect("/")
+            }
+        }).catch((err) => {
+            req.flash("error_msg", "Houve um erro interno")
+            res.redirect("/")
+        })
+    })
+
+
+    app.get("/404", (req,res) => {
+        res.send('Erro 404!')
+    })
 
 // Outros
 const PORT = 49823
