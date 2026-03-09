@@ -13,6 +13,7 @@
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
     import Postagem from "./models/Postagem.js";
+    import Categoria from "./models/Categoria.js";
 // Configurações
     // Sessão
         app.use(session({
@@ -75,10 +76,39 @@
         })
     })
 
+    app.get("/categorias", (req,res) => {
+        Categoria.find().lean().then( (categoria) => {
+            res.render("categorias/index", {categoria: categoria})
+        }).catch( (err) =>{
+            req.flash("error_msg", "Houve um erro interno ao listar as categorias")
+            res.redirect("/")
+        })
+    })
+
+    app.get("/categorias/:slug", (req,res) => {
+        Categoria.findOne({slug: req.params.slug}).lean().then( (categoria) => {
+            if(categoria) {
+                Postagem.find({categoria: categoria._id}).lean().then( (postagens) => {
+
+                    res.render("categorias/postagens", {postagens:postagens, categoria: categoria})
+                }).catch( (err) => {
+                    req.flash("error_msg", "Houve um erro ao listar os posts!")
+                    res.redirect("/")
+                })
+            }else {
+            req.flash("error_msg", "Esta categoria não existe")
+            req.redirect("/")
+            }
+        }).catch((err) => {
+            req.flash("error_msg", "Houve um erro interno ao carregar a página desta categoria")
+            res.redirect("/")
+         })
+    })
 
     app.get("/404", (req,res) => {
         res.send('Erro 404!')
     })
+
 
 // Outros
 const PORT = 49823
