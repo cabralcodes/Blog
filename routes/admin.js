@@ -2,7 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import Categoria from "../models/Categoria.js";
 import Postagem from "../models/Postagem.js";
-const router = express.Router();
+import {Router} from "express";
+const router = Router();
 
 router.get('/', (req, res) => {
     res.render("admin/index")

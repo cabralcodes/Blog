@@ -3,6 +3,7 @@
     import { engine } from "express-handlebars";
     import bodyParser from "body-parser";
     import admin from "./routes/admin.js";
+    import usuarios from "./routes/usuario.js";
     import mongoose from "mongoose";
     import path from "path";
     import { fileURLToPath } from "url";
@@ -52,7 +53,6 @@
     // Public
         app.use(express.static(path.join(__dirname, "public")))
 // Rotas
-    app.use('/admin', admin)
     app.get('/', (req,res) => {
         Postagem.find().lean().populate("categoria").sort({data: "desc"}).then((postagens) => {
             res.render("index", {postagens: postagens})
@@ -108,6 +108,9 @@
     app.get("/404", (req,res) => {
         res.send('Erro 404!')
     })
+
+    app.use('/admin', admin)
+    app.use('/usuarios', usuarios)
 
 
 // Outros
