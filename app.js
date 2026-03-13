@@ -15,6 +15,9 @@
     const __dirname = path.dirname(__filename);
     import Postagem from "./models/Postagem.js";
     import Categoria from "./models/Categoria.js";
+    import passport from "passport";
+    import auth from "./config/auth.js";
+    auth(passport);
 // Configurações
     // Sessão
         app.use(session({
@@ -22,11 +25,14 @@
             resave: true,
             saveUninitialized: true
         }))
+        app.use(passport.initialize())
+        app.use(passport.session())
         app.use(flash())
     // Middleware
         app.use((req,res,next) =>{
             res.locals.success_msg = req.flash("success_msg")
             res.locals.error_msg = req.flash("error_msg")
+            res.locals.error = req.flash("error")
             next()
         })
 

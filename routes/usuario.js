@@ -4,7 +4,7 @@ const router = Router();
 import mongoose from "mongoose";
 import Usuario from "../models/Usuario.js";
 import bcrypt from "bcryptjs";
-
+import passport from "passport";
 
 router.get("/registro", (req,res) => {
     res.render("usuarios/registro")
@@ -84,6 +84,16 @@ router.get("/login", (req,res) => {
     res.render("usuarios/login")
 })
 
+
+router.post("/login", (req, res, next) => {
+
+    passport.authenticate("local", {
+        successRedirect: "/",
+        failureRedirect: "/usuarios/login",
+        failureFlash: true
+    })(req, res, next)
+
+})
 
 export default router;
 
