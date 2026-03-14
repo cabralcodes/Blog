@@ -46,7 +46,7 @@ router.post("/registro", (req,res) => {
                     const novoUsuario = new Usuario({
                         nome: req.body.nome,
                         email: req.body.email,
-                        senha: req.body.senha,
+                        senha: req.body.senha
                     })
 
 
@@ -94,6 +94,16 @@ router.post("/login", (req, res, next) => {
     })(req, res, next)
 
 })
+
+router.get('/logout', (req, res, next) => {
+    req.logout(function(err) {
+        if (err) { return next(err) }
+        req.flash("success_msg", "Deslogado com sucesso!")
+        res.redirect('/')
+      })
+})
+
+
 
 export default router;
 
