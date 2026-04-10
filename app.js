@@ -19,6 +19,7 @@ import moment from "moment";
 import Usuario from "./models/Usuario.js";
 import bcrypt from "bcryptjs";
 const app = express();
+app.set('trust proxy', 1);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -133,10 +134,9 @@ app.use('/usuario', usuario)
 
 app.use((req, res, next) => {
     // Se o usuário tentar acessar uma rota que não existe (o Cannot GET)
-    // nós redirecionamos ele para a home ou para o painel admin
-    res.status(404).redirect("/"); 
+    res.status(404).send("Página não encontrada (404)");
 });
 const PORT = process.env.PORT || 49823;
-app.listen(PORT, () => {
+app.listen(PORT,"0.0.0.0", () => {
     console.log("Servidor rodando em http://localhost:49823")
 })
