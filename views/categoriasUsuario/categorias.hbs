@@ -1,0 +1,14 @@
+<h3>Suas Categorias</h3>
+<hr>
+<a href="/usuario/categorias/add" class="btn btn-success">Nova Categoria</a>
+
+{{#each categorias}}
+    <div class="card mt-3">
+        <div class="card-body">
+            <h4>{{nome}}</h4>
+            <small>Slug: {{slug}}</small>
+        </div>
+    </div>
+{{else}}
+    <p class="mt-4">Nenhuma categoria cadastrada.</p>
+{{/each}}

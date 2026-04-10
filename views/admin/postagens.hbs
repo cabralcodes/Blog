@@ -3,16 +3,44 @@
 <a href="/admin/postagens/add"><button class="btn btn-success">Nova Postagem</button></a>
 
 {{#each postagens}}
-<div class="card mt-4">
-    <div class="card-body">
-        <h4>{{titulo}}</h4>
-        <p>Descrição: {{descricao}}</p>
-        <small> Data: {{data}}</small><br>
-        <small> Categoria: {{categoria.nome}}</small> <br>
-        <a href="/admin/postagens/edit/{{_id}}" class="btn btn-success mt-3">Editar Postagem</a><br>
-        <a href="/admin/postagens/deletar/{{_id}}" class="btn btn-danger mt-3">Deletar Postagem</a>
+<div class="card custom-post-card">
+    <div class="card-body p-4">
+        
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="badge-category">{{categoria.nome}}</span>
+            <span class="text-muted small"><i class="far fa-calendar-alt"></i> {{formatDate data}}</span>
+        </div>
+
+        <h2 class="post-title">{{titulo}}</h2>
+        
+        <div class="post-meta">
+            <span><i class="fas fa-user"></i> Por: <strong>{{usuario.nome}}</strong></span>
+        </div>
+
+        <p class="text-secondary"><em>{{descricao}}</em></p>
+
+        <div class="post-body-content">
+            {{{conteudo}}}
+        </div>
+
+        <div class="mt-4 d-flex gap-2 flex-wrap">
+            <a href="/postagem/{{slug}}/{{_id}}" class="btn btn-success btn-read-more">
+                Ler completo
+            </a>
+
+            {{#podeEditar usuario ../user}}
+                <a href="/usuario/postagens/editar/{{_id}}" class="btn btn-outline-warning btn-read-more">Editar</a>
+                <form action="/usuario/postagens/deletar" method="POST" style="display: inline;">
+                    <input type="hidden" name="id" value="{{_id}}">
+                    <button class="btn btn-outline-danger btn-read-more">Deletar</button>
+                </form>
+            {{/podeEditar}}
+        </div>
+
     </div>
 </div>
 {{else}}
-<p>Nenhuma Postagem registrada!</p>
+    <div class="text-center p-5">
+        <h3 class="text-muted">Ainda não há nada publicado por aqui. ✍️</h3>
+    </div>
 {{/each}}

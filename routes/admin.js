@@ -4,18 +4,21 @@ import Categoria from "../models/Categoria.js";
 import Postagem from "../models/Postagem.js";
 import {Router} from "express";
 import eAdmin from "../helpers/eAdmin.js";
+import estaLogado from "../helpers/estaLogado.js";
+import podeEditarPost from "../middlewares/permissoes.js";
+import Usuario from "../models/Usuario.js";
 const router = Router();
 
 router.get('/', eAdmin, (req, res) => {
     res.render("admin/index")
 })
 
-router.get('/posts', eAdmin, (req,res) => {
+router.get('/posts', estaLogado, (req,res) => {
     res.send("Página de posts")
 })
 
-router.get("/categorias", eAdmin, (req, res) => {
-    Categoria.find().sort({date:'desc'}).lean().then((categorias) => {
+router.get("/categorias", estaLogado, (req, res) => {
+    Categoria.find().sort({date:'desc'}).populate("usuario").lean().then((categorias) => {
         res.render("admin/categorias", {categorias: categorias})
     }).catch((err) => {
         req.flash("error_msg", "Houve um erro ao listar as categorias");
@@ -60,7 +63,7 @@ router.post("/categorias/nova", eAdmin, (req, res) =>{
 }
 })
 
-router.post("/categorias/deletar", eAdmin, (req,res) => {
+router.post("/categorias/deletar", estaLogado, (req,res) => {
     Categoria.deleteOne({_id: req.body.id}).then(() => {
         req.flash("success_msg", "Categoria deletada com sucesso")
         res.redirect("/admin/categorias")
@@ -84,8 +87,8 @@ router.get("/categorias/add", eAdmin, (req,res) => {
     res.render("admin/addcategorias")
 })
 
-router.get("/postagens", eAdmin, (req,res) =>{
-    Postagem.find().lean().populate("categoria").sort({data: "desc"}).then((postagens) => {
+router.get("/postagens", estaLogado, (req,res) =>{
+    Postagem.find().lean().populate("categoria").populate("usuario").sort({data: "desc"}).then((postagens) => {
         res.render("admin/postagens", {postagens: postagens})
     }).catch((err) => {
         req.flash("error_msg", "Houve um erro ao listar as postagens")
@@ -96,7 +99,7 @@ router.get("/postagens", eAdmin, (req,res) =>{
     
 })
 
-router.get("/postagens/add", eAdmin, (req,res)=> {
+router.get("/postagens/add", estaLogado, (req,res)=> {
     Categoria.find().lean().then((categorias) => {
         res.render("admin/addpostagem", {categorias: categorias})
     }).catch((err) => {
@@ -105,7 +108,7 @@ router.get("/postagens/add", eAdmin, (req,res)=> {
     })
 })
 
-router.post("/postagens/nova", eAdmin, (req,res) => {
+router.post("/postagens/nova", estaLogado, (req,res) => {
     var erros = [];
 
     if(req.body.categoria == "0"){
@@ -120,7 +123,8 @@ router.post("/postagens/nova", eAdmin, (req,res) => {
             descricao: req.body.descricao,
             conteudo: req.body.conteudo,
             categoria: req.body.categoria,
-            slug: req.body.slug
+            slug: req.body.slug,
+            usuario: req.user._id
         }
 
         new Postagem(novaPostagem).save().then(() => {
@@ -134,7 +138,7 @@ router.post("/postagens/nova", eAdmin, (req,res) => {
 })
 
 
-router.get("/postagens/edit/:id", eAdmin, (req,res) => {
+router.get("/postagens/edit/:id", estaLogado,podeEditarPost, (req,res) => {
    
     Postagem.findOne({_id: req.params.id}).lean().then((postagem) => {
         Categoria.find().lean().then((categorias) => {
@@ -150,45 +154,55 @@ router.get("/postagens/edit/:id", eAdmin, (req,res) => {
         req.flash("error_msg", "Houve um erro ao carregar o formulário de edição")
         res.redirect("/admin/postagens")
         
-    })   
+    })  
 })
 
-router.post("/postagem/edit", eAdmin, (req,res) => {
 
-    Postagem.findOne({_id: req.body.id}).then((postagem) => {
-            postagem.titulo = req.body.titulo
-            postagem.slug = req.body.slug
-            postagem.descricao = req.body.descricao
-            postagem.conteudo = req.body.conteudo
-            postagem.categoria = req.body.categoria
+router.post( "/postagens/edit/:id",estaLogado,podeEditarPost,(req, res) => {
+
+        Postagem.findOne({ _id: req.params.id }).then((postagem) => {
+
+            if (!postagem) {
+                req.flash("error_msg", "Postagem não encontrada");
+                return res.redirect("/admin/postagens");
+            }
+
+            postagem.titulo = req.body.titulo;
+            postagem.slug = req.body.slug;
+            postagem.descricao = req.body.descricao;
+            postagem.conteudo = req.body.conteudo;
+            postagem.categoria = req.body.categoria;
 
             postagem.save().then(() => {
-                req.flash("success_msg", "Postagem editada com sucesso")
-                res.redirect("/admin/postagens")
+                req.flash("success_msg", "Postagem editada com sucesso");
+                res.redirect("/admin/postagens");
             }).catch((err) => {
-                req.flash("error_msg", "Erro interno")
-                res.redirect("/admin/postagens")
-            })
+                console.log(err);
+                req.flash("error_msg", "Erro ao salvar edição");
+                res.redirect("/admin/postagens");
+            });
+
+        }).catch((err) => {
+            console.log(err);
+            req.flash("error_msg", "Erro ao carregar postagem");
+            res.redirect("/admin/postagens");
+        });
+
+    }
+);
+
+// Removido o :id da URL e trocado para .post
+router.post("/postagens/deletar", estaLogado, (req, res) => {
+    // Buscamos pelo ID que vem do formulário (req.body.id)
+    Postagem.deleteOne({_id: req.body.id}).then(() => {
+        req.flash("success_msg", "Postagem deletada com sucesso!");
+        res.redirect("/admin/postagens");
     }).catch((err) => {
-        console.log(err)
-            req.flash("error_msg", "Houve um erro ao salvar a edição")
-            res.redirect("/admin/postagens")
-        })
-
-
-
-})
-
-router.get("/postagens/deletar/:id", eAdmin, (req,res) => {
-    Postagem.deleteOne({_id: req.params.id}).then(()=> {
-        req.flash("success_msg", "Postagem deletada com Sucesso!")
-        res.redirect("/admin/postagens")
-    }).catch((err) => {
-        req.flash("error_msg", "Houve um Erro interno")
-        res.redirect("/admin/postagens")
-    })
-})
-
+        console.error("ERRO NO MONGOOSE:", err); 
+        req.flash("error_msg", "Houve um erro interno ao deletar.");
+        res.redirect("/admin/postagens");
+    });
+});
 
 export default router;
 

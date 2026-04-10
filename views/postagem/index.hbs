@@ -1,11 +1,38 @@
-<div class="card">
+<div class="card mt-4">
     <div class="card-body">
         <h1>{{postagem.titulo}}</h1>
         <hr>
-        <small>{{postagem.data}}</small>
+        
+        {{!-- Exibe a data e hora usando o helper formatDate --}}
+        <small>Publicado em: {{formatDate postagem.data}}</small>
         <br>
-        <small>{{categoria}}</small>
+        
+        {{!-- Exibe o nome do autor (lembrando que precisa do .populate("usuario") na rota) --}}
+        <small>Criado por: <strong>{{postagem.usuario.nome}}</strong></small>
         <br>
-        {{postagem.conteudo}}
+        
+        {{!-- Exibe a categoria --}}
+        <small>Categoria: {{postagem.categoria.nome}}</small>
+        <hr>
+        
+        {{!-- Exibe o conteúdo --}}
+        <div class="post-conteudo">
+            {{{postagem.conteudo}}}
+        </div>
+        
+    {{#podeEditar postagem.usuario user}}
+    {{!-- Exibi os botões ---}}
+    <hr>
+    <a href="/usuario/postagens/editar/{{postagem._id}}" class="btn btn-warning mt-3">
+        Editar Postagem
+    </a><br>
+
+    <a href="/usuario/postagens/deletar/{{postagem._id}}" class="btn btn-danger mt-3">
+        Deletar Postagem
+    </a>
+
+{{/podeEditar}}
+        <hr>
+        <a href="/" class="btn btn-outline-primary">Voltar para a Home</a>
     </div>
 </div>

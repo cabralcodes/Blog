@@ -27,7 +27,12 @@ const Postagem = new Schema ({
     data: {
         type: Date,
         default: Date.now()
-    }
+    },
+    usuario: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "usuarios",
+    required: true
+}
 
 })
 

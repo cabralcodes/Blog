@@ -1,26 +1,102 @@
-<div class="p-5 mb-4 bg-light rounded-3">
-  <div class="container-fluid py-5">
-    <h1 class="display-5 fw-bold">Bem-vindo ao Blog do Node</h1>
-    <p class="col-md-8 fs-4">Este é um componente personalizado que substitui o antigo Jumbotron do Bootstrap 4.</p>
-    <button class="btn btn-primary btn-lg" type="button">Crie uma conta</button>
-  </div>
-</div>
+{{!-- 1. SEÇÃO DE APRESENTAÇÃO (Apenas para quem não está logado) --}}
+{{#unless user}}
+    <div class="row align-items-center g-5 py-5 mb-5 bg-white rounded-4 shadow-sm border">
+      <div class="col-lg-6 px-5">
+        <h1 class="display-3 fw-bold lh-1 mb-3 text-dark">Bem-vindo ao <span class="text-success">BlogNode</span></h1>
+        <p class="fs-4 text-muted">Acompanhe nossa jornada pelo dia a dia, explore os mistérios de Resident Evil e navegue com a tripulação de One Piece.</p>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-4">
+          <a href="/usuario/registro" class="btn btn-success btn-lg px-4 shadow">Criar minha conta</a>
+          <a href="/usuario/login" class="btn btn-outline-secondary btn-lg px-4 shadow-sm">Entrar</a>
+        </div>
+      </div>
+      <div class="col-lg-6 text-center d-none d-lg-block">
+        {{!-- Ícone grande de destaque --}}
+        <i class="fas fa-layer-group fa-10x text-success opacity-25"></i>
+      </div>
+    </div>
 
-<hr>
+    {{!-- 2. SEÇÃO DOS TRÊS ASSUNTOS --}}
+    <div class="container py-5">
+        <h2 class="text-center fw-bold mb-5">Nossos Universos</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm custom-post-card text-center p-4">
+                    <div class="feature-icon-small bg-primary bg-gradient mb-3 mx-auto shadow-sm">
+                        <i class="fas fa-coffee text-white"></i>
+                    </div>
+                    <h3 class="fw-bold">Dia a Dia</h3>
+                    <p class="text-muted">Produtividade, rotina e reflexões sobre a vida real.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm custom-post-card text-center p-4">
+                    <div class="feature-icon-small bg-danger bg-gradient mb-3 mx-auto shadow-sm">
+                        <i class="fas fa-biohazard text-white"></i>
+                    </div>
+                    <h3 class="fw-bold">RE: Requiem</h3>
+                    <p class="text-muted">Tudo sobre o universo de horror da Capcom.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm custom-post-card text-center p-4">
+                    <div class="feature-icon-small bg-warning bg-gradient mb-3 mx-auto shadow-sm">
+                        <i class="fas fa-anchor text-white"></i>
+                    </div>
+                    <h3 class="fw-bold">One Piece</h3>
+                    <p class="text-muted">Reviews e teorias sobre o bando do Chapéu de Palha.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="my-5">
+{{/unless}}
 
+{{!-- 3. LISTAGEM GERAL DE POSTAGENS (Aparece para todos) --}}
+<div class="container mb-5">
+    <h2 class="fw-bold mb-4 text-dark"><i class="fas fa-newspaper text-success"></i> Feed de Postagens</h2>
+    
+    <div class="row">
+        <div class="col-md-10 mx-auto">
+            {{#each postagens}}
+                <div class="card custom-post-card mb-5">
+                    <div class="card-body p-4">
+                        
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge-category">{{categoria.nome}}</span>
+                            <span class="text-muted small"><i class="far fa-calendar-alt"></i> {{formatDate data}}</span>
+                        </div>
 
-<h2>Postagens recentes: </h2>
-{{#each postagens}}
-<div class="card mt-4">
-    <div class="card-body">
-        <h3>{{titulo}}</h3>
-        <p>{{descricao}}</p>
-        <a href="/postagem/{{slug}}" class="btn btn-success">Leia mais</a>
-        <hr>
-         <small>Categoria: {{categoria.nome}}</small>
-        <small>Data de Publicação: {{data}}</small>
+                        <h2 class="post-title">{{titulo}}</h2>
+                        
+                        <div class="post-meta mb-3">
+                            <span><i class="fas fa-user"></i> Por: <strong>{{usuario.nome}}</strong></span>
+                        </div>
+
+                        <p class="text-secondary mb-4"><em>{{descricao}}</em></p>
+
+                        {{!-- O CONTEÚDO QUE VOCÊ QUERIA QUE APARECESSE --}}
+                        <div class="post-body-content mb-4">
+                            {{{conteudo}}}
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a href="/postagem/{{slug}}/{{_id}}" class="btn btn-success btn-read-more">
+                                Ler completo
+                            </a>
+                            
+                            {{!-- Helper para editar se for o dono --}}
+                            {{#podeEditar usuario ../user}}
+                                <a href="/usuario/postagens/editar/{{_id}}" class="btn btn-outline-warning btn-read-more">Editar</a>
+                            {{/podeEditar}}
+                        </div>
+
+                    </div>
+                </div>
+            {{else}}
+                <div class="alert alert-light text-center py-5 shadow-sm rounded-4">
+                    <p class="text-muted">Ainda não há postagens publicadas.</p>
+                </div>
+            {{/each}}
+        </div>
     </div>
 </div>
-{{else}}
-<h5>Nenhuma postagem</h5>
-{{/each}}

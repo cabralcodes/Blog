@@ -4,25 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog NodeJS</title>
+    
     <link rel="stylesheet" href="/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* Garantir que o fundo do site não seja totalmente branco para o card destacar */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        /* Estilo Geral do Card */
+        .custom-post-card {
+            border: none !important; /* Forcei a remoção da borda padrão */
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: #fff;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .custom-post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-title {
+            font-weight: 800;
+            color: #2c3e50;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-meta {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .badge-category {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+        }
+
+        .post-body-content {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #444;
+            border-top: 1px solid #f1f1f1;
+            padding-top: 20px;
+        }
+
+        .post-body-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .btn-read-more {
+            border-radius: 8px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+/* Gradiente para os ícones de recursos */
+.text-bg-success {
+    background: linear-gradient(45deg, #28a745, #218838) !important;
+}
+
+/* Animação suave para a entrada da página */
+.display-3 {
+    animation: fadeInDown 0.8s ease-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilo para ícones grandes */
+.fa-10x {
+    font-size: 15rem;
+}
+
+/* Estilo para os ícones dos destaques */
+.feature-icon-small {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+/* Cores dos gradientes para cada tema */
+.bg-primary.bg-gradient { background: linear-gradient(45deg, #007bff, #0056b3) !important; }
+.bg-danger.bg-gradient { background: linear-gradient(45deg, #dc3545, #a71d2a) !important; }
+.bg-warning.bg-gradient { background: linear-gradient(45deg, #ffc107, #d39e00) !important; }
+
+/* Tamanho do ícone gigante da hero */
+.fa-10 { font-size: 10rem; }
+
+    </style>
 </head>
 <body>
     {{>_navbar}}
     <div class="container mt-4">
         {{#if error}}
-        <div class="alert alert-danger">{{error}}</div>
-
-        {{else}}
-
+            <div class="alert alert-danger">{{error}}</div>
         {{/if}}
+        
         {{>_msg}}
         {{{body}}}
     </div>
-    
 
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
 </body>
-
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js" integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y" crossorigin="anonymous"></script>
-<script src="/js/bootstrap.min.js"></script>
 </html>
