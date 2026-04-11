@@ -109,11 +109,9 @@ const dbURI = process.env.MONGODB_URI || "mongodb://localhost/blogapp";
 
     // ROTA PÚBLICA PARA LER POSTAGEM COMPLETA
 app.get("/postagem/:slug/:id", (req, res) => {
-    console.log("Rota acessada!"); // Isso tem que aparecer no terminal
     
-    Postagem.findOne({ _id: req.params.id }).lean().then((postagem) => {
+    Postagem.findOne({ _id: req.params.id }).populate("categoria").populate("usuario").lean().then((postagem) => {
         if(postagem) {
-            console.log("Postagem encontrada: " + postagem.titulo);
             res.render("postagem/index", { postagem: postagem });
         } else {
             console.log("Postagem não existe no banco.");
